@@ -1,4 +1,4 @@
-package cn.com.lbn.lamda;
+package cn.com.lbn.lambda;
 
 public class LamdaTestFuncCaller {
 	public void testCall(LamdaTestFuncInfc funcInfc) {

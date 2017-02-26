@@ -1,4 +1,4 @@
-package cn.com.lbn.lamda;
+package cn.com.lbn.lambda;
 
 @FunctionalInterface
 public interface LamdaTestFuncInfc {

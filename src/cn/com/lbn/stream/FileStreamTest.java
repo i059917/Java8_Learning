@@ -19,28 +19,60 @@ public class FileStreamTest {
 		String fileName = "/Users/i059917/Downloads/tmp/enwiki-20170220-pages-articles-multistream-index.txt";
 		
 		//System.out.println(Files.lines(Paths.get(fileName)).count());
-		Files.lines(Paths.get(fileName)).limit(13000000).forEach((element) -> {
-				if(element != null && element.indexOf(":") != -1) {
-					String[] strArr = element.split(":");
-					if(strArr != null && strArr.length > 0) {
-						String title = strArr[strArr.length - 1];
-						if(title != null && title.length() > 0) {
-							char firstChar = title.charAt(0);
-							if((firstChar >= 'A' && firstChar <= 'Z') || (firstChar >= 'a' && firstChar <= 'z')) {
-								List<String> strList = keyWordMap.get(Character.toString(firstChar).toUpperCase());
-								strList.add(element);
-							}
-						}
-					}
+		
+		long count = Files.lines(Paths.get(fileName)).filter((element) -> {
+			if(element == null || element.length() == 0 ) {
+				return false;
+			}
+			if(!element.contains(":")) {
+				return false;
+			}
+			if(element.split(":").length != 3) {
+				return false;
+			}
+
+			int lastSplitIndex = element.lastIndexOf(":");
+			for(int i = 0; i < lastSplitIndex; i++) {
+				char c = element.charAt(i);
+				if(Character.isDigit(c) || c == ':') {
+					continue;
+				} else {
+					return false;
 				}
 			}
-		);
+			for(int i = lastSplitIndex + 1; i < element.length(); i++) {
+				char c = element.charAt(i);
+				if(Character.isLetter(c)) {
+					continue;
+				} else {
+					return false;
+				}
+			}
+			return true;
+		}).map((element) -> {
+			String title = element.substring(element.lastIndexOf(":") + 1, element.length());
+			return title;
+		}).filter((element) -> {
+			if(element.length() >= 4) {
+				if(element.charAt(0) == element.charAt(1) && element.charAt(1) == element.charAt(2)
+						&& element.charAt(2) == element.charAt(3)) {
+//					try {
+//						Thread.sleep(1);
+//					} catch(InterruptedException ie) {
+//						ie.printStackTrace();
+//					}
+					System.out.println(element);
+					return true;
+				}
+			}
+			return false;
+		}).count();
+		System.out.println("Lines count: " + count);
+		System.out.println("Cost time:" + (System.currentTimeMillis() - start));
 		
-		System.out.println(System.currentTimeMillis() - start);
-		
-		for(String key : keyWordMap.keySet()) {
-			System.out.println(key + " - " + keyWordMap.get(key).size());
-		}
+		//for(String key : keyWordMap.keySet()) {
+		//	System.out.println(key + " - " + keyWordMap.get(key).size());
+		//}
 	}
 	
 	private static void initArrayListForEachKey() {
