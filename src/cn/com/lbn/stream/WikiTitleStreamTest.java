@@ -26,6 +26,8 @@ public class WikiTitleStreamTest {
 	private static Predicate<String> filterByInvalidLetter = null;
 	private static Function<String, String> mapToArticleTitle = null;
 	private static Predicate<String> filterBySameFirst4Char = null;
+	private static long timeCostSquential;
+	private static long timeCostParallel;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -69,8 +71,7 @@ public class WikiTitleStreamTest {
 		filterBySameFirst4Char = (element) -> {
 			if(element.length() >= 4) {
 				if(element.charAt(0) == element.charAt(1) && element.charAt(1) == element.charAt(2)
-						&& element.charAt(2) == element.charAt(3)) {
-					
+						&& element.charAt(2) == element.charAt(3)) {				
 					return true;
 				}
 			}
@@ -97,28 +98,40 @@ public class WikiTitleStreamTest {
 		
 		Collections.sort(resultSequential);
 		Collections.sort(resultParallel);
+		assertThat(resultSequential, equalTo(resultParallel));
 		
+		printOutSummary();
+	}
+	
+	private void processSequentially() throws IOException {
+		long start = System.currentTimeMillis();
+		
+		resultSequential = Files.lines(Paths.get(fileName)).filter(filterByInvalidLetter)
+				.map(mapToArticleTitle).filter(filterBySameFirst4Char).collect(Collectors.toList());
+		
+		timeCostSquential = System.currentTimeMillis() - start;
+		System.out.println("Cost time in sequantial: " + timeCostSquential);
+	}
+	
+	private void processParralelly() throws IOException {
+		long start = System.currentTimeMillis();
+		
+		resultParallel = Files.lines(Paths.get(fileName)).parallel().filter(filterByInvalidLetter)
+				.map(mapToArticleTitle).filter(filterBySameFirst4Char).collect(Collectors.toList());
+		
+		timeCostParallel = System.currentTimeMillis() - start;
+		System.out.println("Cost time in parallel: " + timeCostParallel);
+	}
+	
+	private void printOutSummary() {
 		System.out.println();
 		System.out.println("Sequential result count: " + resultSequential.size());
 		System.out.println("Parallel result count: " + resultParallel.size());
 		System.out.println();
 		System.out.println("Sequential result: " + resultSequential);
 		System.out.println("Parallel result: " + resultParallel);
-		
-		assertThat(resultSequential, equalTo(resultParallel));
-	}
-	
-	private void processSequentially() throws IOException {
-		long start = System.currentTimeMillis();
-		resultSequential = Files.lines(Paths.get(fileName)).filter(filterByInvalidLetter)
-				.map(mapToArticleTitle).filter(filterBySameFirst4Char).collect(Collectors.toList());
-		System.out.println("Cost time in sequantial: " + (System.currentTimeMillis() - start));
-	}
-	
-	private void processParralelly() throws IOException {
-		long start = System.currentTimeMillis();
-		resultParallel = Files.lines(Paths.get(fileName)).parallel().filter(filterByInvalidLetter)
-				.map(mapToArticleTitle).filter(filterBySameFirst4Char).collect(Collectors.toList());
-		System.out.println("Cost time in parallel: " + (System.currentTimeMillis() - start));
+		int fasterRate = Math.round(((timeCostSquential - timeCostParallel)/(float)timeCostSquential) * 100);
+		System.out.println();
+		System.out.println("Parallel processing is " + fasterRate + "% faster than sequential processing.");
 	}
 }
