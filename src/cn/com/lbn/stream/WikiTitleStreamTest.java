@@ -132,6 +132,6 @@ public class WikiTitleStreamTest {
 		System.out.println("Parallel result: " + resultParallel);
 		int fasterRate = Math.round(((timeCostSquential - timeCostParallel)/(float)timeCostSquential) * 100);
 		System.out.println();
-		System.out.println("Parallel processing is " + fasterRate + "% faster than sequential processing.");
+		System.out.println("Parallel is " + fasterRate + "% faster than sequential.");
 	}
 }
