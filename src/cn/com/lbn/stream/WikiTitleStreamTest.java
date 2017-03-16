@@ -19,6 +19,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.apple.eawt.AppEvent.SystemSleepEvent;
+
 public class WikiTitleStreamTest {
 	
 	private static final String fileName = "/Users/i059917/Downloads/tmp/enwiki-20170220-pages-articles-multistream-index.txt";
@@ -29,6 +31,8 @@ public class WikiTitleStreamTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		System.out.println("Available processors: " + Runtime.getRuntime().availableProcessors());
+		System.out.println();
 	}
 
 	@AfterClass
@@ -72,16 +76,16 @@ public class WikiTitleStreamTest {
 				.map(mapToArticleTitle).filter(filterBySameFirst4Char).collect(Collectors.toList());
 		
 		timeCostParallel = System.currentTimeMillis() - start;
-		System.out.println("Cost time in parallel: " + timeCostParallel);
+		System.out.println("Cost time in parallel:   " + timeCostParallel);
 	}
 	
 	private void printOutSummary() {
 		System.out.println();
 		System.out.println("Sequential result count: " + resultSequential.size());
-		System.out.println("Parallel result count: " + resultParallel.size());
+		System.out.println("Parallel result count:   " + resultParallel.size());
 		System.out.println();
 		System.out.println("Sequential result: " + resultSequential);
-		System.out.println("Parallel result: " + resultParallel);
+		System.out.println("Parallel result:   " + resultParallel);
 		int fasterRate = Math.round(((timeCostSquential - timeCostParallel)/(float)timeCostSquential) * 100);
 		System.out.println();
 		System.out.println("Parallel is " + fasterRate + "% faster than sequential.");

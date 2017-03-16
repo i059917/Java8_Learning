@@ -41,7 +41,7 @@ public class WikiTitleCountTest {
 		assertThat(countBySequantial, equalTo(countByParallel));
 		
 		System.out.println("countBySequantial: " + countBySequantial);
-		System.out.println("countByParallel: " + countByParallel);
+		System.out.println("countByParallel:   " + countByParallel);
 	}
 
 }
