@@ -19,11 +19,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.apple.eawt.AppEvent.SystemSleepEvent;
-
 public class WikiTitleStreamTest {
 	
-	private static final String fileName = "/Users/i059917/Downloads/tmp/enwiki-20170220-pages-articles-multistream-index.txt";
+	private static final String FOLDER = "/Users/i059917/Downloads/tmp/";
+	private static final String FILE_NAME = FOLDER + "enwiki-20170220-pages-articles-multistream-index.txt";
 	private static List<String> resultSequential = null;
 	private static List<String> resultParallel = null;
 	private static long timeCostSquential;
@@ -62,7 +61,7 @@ public class WikiTitleStreamTest {
 	private void processSequentially() throws IOException {
 		long start = System.currentTimeMillis();
 		
-		resultSequential = Files.lines(Paths.get(fileName)).filter(filterByInvalidLetter)
+		resultSequential = Files.lines(Paths.get(FILE_NAME)).filter(filterByInvalidLetter)
 				.map(mapToArticleTitle).filter(filterBySameFirst4Char).collect(Collectors.toList());
 		
 		timeCostSquential = System.currentTimeMillis() - start;
@@ -72,7 +71,7 @@ public class WikiTitleStreamTest {
 	private void processParralelly() throws IOException {
 		long start = System.currentTimeMillis();
 		
-		resultParallel = Files.lines(Paths.get(fileName)).parallel().filter(filterByInvalidLetter)
+		resultParallel = Files.lines(Paths.get(FILE_NAME)).parallel().filter(filterByInvalidLetter)
 				.map(mapToArticleTitle).filter(filterBySameFirst4Char).collect(Collectors.toList());
 		
 		timeCostParallel = System.currentTimeMillis() - start;
