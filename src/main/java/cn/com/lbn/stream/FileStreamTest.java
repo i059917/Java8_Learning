@@ -16,10 +16,10 @@ public class FileStreamTest {
 		
 		long start = System.currentTimeMillis();
 		
-		String fileName = "/Users/i059917/Downloads/tmp/enwiki-20170220-pages-articles-multistream-index.txt";
+		String fileName = "/Users/li_beining/Downloads/tmp/enwiki-20170220-pages-articles-multistream-index.txt";
 		
 		//System.out.println(Files.lines(Paths.get(fileName)).count());
-		Files.lines(Paths.get(fileName)).limit(13000000).forEach((element) -> {
+		Files.lines(Paths.get(fileName)).limit(5000000).parallel().forEach((element) -> {
 				if(element != null && element.indexOf(":") != -1) {
 					String[] strArr = element.split(":");
 					if(strArr != null && strArr.length > 0) {
